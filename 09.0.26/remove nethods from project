@@ -1,0 +1,57 @@
+class Solution {
+    public List<Integer> remainingMethods(int n, int k, int[][] invocations) {
+        boolean[] suspicious = new boolean[n];
+        List<Integer>[] paths = new ArrayList[n];
+
+        for(int i = 0; i < n; i++){
+            paths[i] = new ArrayList<>();
+        }
+
+        for(int[] x: invocations){
+            int u = x[0], v = x[1];
+            paths[u].add(v);
+        }
+        dfs1(k, suspicious, paths);
+
+        int[] visited = new int[n];
+        for(int i = 0; i < n; i++){
+            if(!suspicious[i] && visited[i] == 0){
+                dfs2(i, suspicious, paths, visited);
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for(int i = 0; i < n; i++) if(visited[i] == 2){
+            for(int j = 0; j < n; j++) ans.add(j);
+            return ans;
+        }
+
+        for(int i = 0; i < n; i++){
+            if(!suspicious[i]) ans.add(i);
+        }
+        return ans;
+    }
+
+    private void dfs1(int u, boolean[] suspicious, List<Integer>[] paths){
+        suspicious[u] = true;
+        for(int v: paths[u]){
+            if(!suspicious[v]){
+                dfs1(v, suspicious, paths);
+            }
+        }
+    }
+
+    private void dfs2(int u, boolean[] suspicious, List<Integer>[] paths, int[] visited){
+        visited[u] = 1;
+        if(suspicious[u]){
+            visited[u] = 2;
+            return;
+        }
+
+        for(int v: paths[u]){
+            if(visited[v] == 0){
+                dfs2(v, suspicious, paths, visited);
+            }
+        }
+    }
+}
