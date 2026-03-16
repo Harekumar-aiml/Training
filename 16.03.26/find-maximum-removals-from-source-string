@@ -1,0 +1,32 @@
+class Solution {
+    char[] s, t;
+    int n, m;
+    Set<Integer> set;
+    int max = (int)1e9;
+    int[][] dp;
+    int lcs(int i, int j) {
+        if(i == n) {
+            if(j == m) return 0;
+            return max;
+        }
+        if(j == m) return 0;
+        if(dp[i][j] != -1) return dp[i][j];
+        int ta = max, l = max;
+        if(s[i] == t[j]) {
+            if(set.contains(i)) ta = 1 + lcs(i + 1, j + 1);
+            else ta = lcs(i + 1, j + 1);
+        }
+        l = lcs(i + 1, j);
+        return dp[i][j] = Math.min(ta, l);
+    }
+    public int maxRemovals(String source, String pattern, int[] targetIndices) {
+        s = source.toCharArray(); t = pattern.toCharArray();
+        n = s.length; m = t.length;
+        set = new HashSet<>();
+        for(int x : targetIndices) set.add(x);
+        dp = new int[n][m];
+        for(int[] a : dp) Arrays.fill(a, -1);
+        int x = lcs(0, 0);
+        return targetIndices.length - x;
+    }
+}
